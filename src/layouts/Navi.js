@@ -1,8 +1,30 @@
-import React from "react";
+import React, {useState} from "react";
 import CartSummary from "./CartSummary";
-import { Button, Container, Menu } from "semantic-ui-react";
+import { Container, Menu } from "semantic-ui-react";
+import SignedOut from "./SignedOut";
+import SignedIn from "./SignedIn";
+import { useHistory } from "react-router";
+import { useSelector } from 'react-redux';
 
 export default function Navi() {
+
+  const { cartItems } = useSelector((state) => state.cart)
+
+  const [isAuthenticated, setIsAuthenticated] = useState(true) //Burası önemli!!!
+
+  const history = useHistory()
+
+  function handleSignOut() {
+    setIsAuthenticated(false)
+
+    history.push("/")
+  }
+
+  function handleSignIn() {
+    setIsAuthenticated(true)
+  }
+
+
   return (
     <div>
       <Menu inverted fixed="top">
@@ -11,14 +33,16 @@ export default function Navi() {
           <Menu.Item name="messages" />
 
           <Menu.Menu position="right">
-            <CartSummary/>
+          {cartItems.length>0 &&<CartSummary/>} 
 
-            <Menu.Item>
-              <Button primary>Sign Up</Button>
-            </Menu.Item>
+            {isAuthenticated? <SignedIn signOut={handleSignOut} /> : <SignedOut signIn={handleSignIn} />}      
+            
           </Menu.Menu>
         </Container>
       </Menu>
     </div>
   );
 }
+
+
+/*cartItems eleman sayısı 0'dan büyükse sepeti gösterir */
